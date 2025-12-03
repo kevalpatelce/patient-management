@@ -1,0 +1,31 @@
+service: patient-management
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  stage: dev
+  environment:
+    PATIENTS_TABLE: PatientsTable
+
+functions:
+  api:
+    handler: src/handler.handler
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
+
+resources:
+  Resources:
+    PatientTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: PatientsTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
